@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SistemaPOS.Src.Presentation.Pages.ProductPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:templates="clr-namespace:SistemaPOS.Src.Presentation.Pages.Templates;assembly=SistemaPOS"
+    xmlns:vm="clr-namespace:SistemaPOS.Src.Presentation.ViewModels"
+    xmlns:widget="clr-namespace:SistemaPOS.Src.Presentation.Pages.Widgets;assembly=SistemaPOS"
+    Title="Products"
+    x:DataType="vm:ProductViewModel">
+    <Grid
+        Padding="5"
+        ColumnSpacing="0"
+        RowSpacing="0">
+        <!--  CATALOG  -->
+        <Label
+            HorizontalOptions="Center"
+            IsVisible="{Binding Products.Count, Converter={StaticResource DoesNotHaveCountConverter}}"
+            Text="NO PRODUCTS FOUND"
+            VerticalOptions="Center" />
+        <CollectionView
+            x:Name="Products"
+            IsVisible="{Binding Products.Count, Converter={StaticResource HasCountConverter}}"
+            ItemsSource="{Binding Products, Mode=OneTime}"
+            SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+            SelectionChangedCommand="{Binding AddCatalogItemCommand}"
+            SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}"
+            SelectionMode="Single">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="2" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <templates:ProductTemplate />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <!--  INDICATOR  -->
+        <ActivityIndicator
+            HorizontalOptions="Center"
+            IsRunning="{Binding IsBusy}"
+            IsVisible="{Binding IsBusy}"
+            VerticalOptions="Center"
+            Color="{StaticResource LightGreenColor}" />
+        <widget:BadgeView
+            x:Name="badge"
+            Margin="16"
+            BadgeColor="{AppThemeBinding Light={StaticResource DarkBackgroundColor},
+                                         Dark={StaticResource LightBackgroundColor}}"
+            HorizontalOptions="End"
+            Text="{Binding BadgeCount, Mode=OneWay}"
+            TextColor="{AppThemeBinding Light={StaticResource DarkForegroundColor},
+                                        Dark={StaticResource LightForegroundColor}}"
+            VerticalOptions="End">
+            <Button
+                Padding="8"
+                BackgroundColor="{StaticResource LightGreenColor}"
+                Command="{Binding ToOrderCommand, Mode=OneTime}"
+                CornerRadius="8"
+                HeightRequest="56"
+                ImageSource="{DynamicResource BasketIconForTitleImageSource}"
+                WidthRequest="56" />
+        </widget:BadgeView>
+    </Grid>
+</ContentPage>

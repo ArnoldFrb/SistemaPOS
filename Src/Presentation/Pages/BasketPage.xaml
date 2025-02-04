@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SistemaPOS.Src.Presentation.Pages.BasketPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:templates="clr-namespace:SistemaPOS.Src.Presentation.Pages.Templates;assembly=SistemaPOS"
+    xmlns:vm="clr-namespace:SistemaPOS.Src.Presentation.ViewModels"
+    xmlns:widget="clr-namespace:SistemaPOS.Src.Presentation.Pages.Widgets;assembly=SistemaPOS"
+    Title="Products"
+    x:DataType="vm:ProductViewModel">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <Style x:Key="CartTotalStyle" TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="Montserrat-Regular" />
+                <Setter Property="FontSize" Value="{StaticResource LargerSize}" />
+                <Setter Property="HorizontalOptions" Value="End" />
+            </Style>
+
+            <Style x:Key="CheckoutButtonStyle" TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="Montserrat-Regular" />
+                <Setter Property="TextColor" Value="{StaticResource WhiteColor}" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="ShoppingCartStyle" TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="Montserrat-Regular" />
+                <Setter Property="FontSize" Value="{StaticResource MediumSize}" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="Margin" Value="0, 12" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!--  SHOPPING CART  -->
+        <Grid IsVisible="{Binding Orders.Count, Converter={StaticResource HasCountConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="60" />
+            </Grid.RowDefinitions>
+            <!--  CART ITEMS  -->
+            <CollectionView
+                Grid.Row="0"
+                ItemsSource="{Binding Orders}"
+                SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <templates:BasketItemTemplate />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.Footer>
+                    <!--  TOTAL  -->
+                    <HorizontalStackLayout Grid.Row="0" Padding="8">
+                        <Label
+                            HorizontalOptions="EndAndExpand"
+                            Style="{StaticResource CartTotalStyle}"
+                            Text="TOTAL"
+                            TextColor="{AppThemeBinding Dark={StaticResource DarkFontColor},
+                                                        Light={StaticResource LightFontColor}}"
+                            VerticalOptions="CenterAndExpand" />
+                        <Label
+                            HorizontalOptions="End"
+                            Style="{StaticResource CartTotalStyle}"
+                            Text="{Binding Total, StringFormat='${0:N}'}"
+                            TextColor="{StaticResource GreenColor}"
+                            VerticalOptions="CenterAndExpand" />
+                    </HorizontalStackLayout>
+                </CollectionView.Footer>
+            </CollectionView>
+            <!--  CHECKOUT  -->
+            <Grid
+                Grid.Row="1"
+                Padding="0"
+                BackgroundColor="{StaticResource LightGreenColor}"
+                ColumnSpacing="0"
+                RowSpacing="0">
+                <Label Style="{StaticResource CheckoutButtonStyle}" Text="[ CHECKOUT ]" />
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToDialogCommand}" NumberOfTapsRequired="1" />
+                </Grid.GestureRecognizers>
+            </Grid>
+        </Grid>
+        <!--  EMPTY SHOPPING CART  -->
+        <Grid IsVisible="{Binding Orders.Count, Converter={StaticResource DoesNotHaveCountConverter}}">
+            <Label
+                HorizontalOptions="Center"
+                Text="EMPTY SHOPPING CART"
+                VerticalOptions="Center" />
+        </Grid>
+    </Grid>
+</ContentPage>
